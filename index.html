@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Penghitung Barang Masuk</title>
+
+    <style>
+      * {
+          box-sizing: border-box;
+      }
+
+      body {
+          margin: 0;
+          padding: 20px;
+          background: #111827;
+          color: white;
+          font-family: Arial, sans-serif;
+      }
+
+      .container {
+          max-width: 420px;
+          margin: 30px auto;
+          background: #1f2937;
+          padding: 25px;
+          border-radius: 18px;
+      }
+
+      h2 {
+          text-align: center;
+      }
+
+      input {
+          width: 100%;
+          padding: 14px;
+          border-radius: 9px;
+          border: 1px solid #4b5563;
+          background: #374151;
+          color: white;
+          font-size: 16px;
+          margin: 15px 0;
+      }
+
+      .counter {
+          text-align: center;
+          font-size: 75px;
+          font-weight: bold;
+          margin: 25px 0;
+      }
+
+      .buttons {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 10px;
+      }
+
+      button {
+          border: none;
+          padding: 15px;
+          border-radius: 9px;
+          font-size: 17px;
+          font-weight: bold;
+          cursor: pointer;
+          color: white;
+      }
+
+      button:active {
+          transform: scale(0.96);
+      }
+
+      .minus { background: #ef4444; }
+      .plus { background: #16a34a; }
+      .plus5 { background: #2563eb; }
+      .save { background: #d97706; width: 100%; margin-top: 12px; }
+      .reset { background: #4b5563; width: 100%; margin-top: 10px; }
+
+      hr {
+          border: 0;
+          border-top: 1px solid #374151;
+          margin: 25px 0;
+      }
+
+      .item {
+          background: #374151;
+          padding: 13px;
+          border-radius: 9px;
+          margin-top: 10px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 10px;
+      }
+
+      .item button {
+          background: #dc2626;
+          padding: 8px 12px;
+          font-size: 13px;
+      }
+
+      .total {
+          text-align: center;
+          color: #4ade80;
+          font-size: 18px;
+          font-weight: bold;
+          margin-top: 15px;
+      }
+
+      .empty {
+          text-align: center;
+          color: #9ca3af;
+          padding: 15px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>📦 Barang Masuk</h2>
+
+      <input
+        type="text"
+        id="namaBarang"
+        placeholder="Masukkan nama barang..."
+      />
+
+      <div class="counter" id="angka">0</div>
+
+      <div class="buttons">
+        <button class="minus" id="kurang">-1</button>
+        <button class="plus" id="tambah">+1</button>
+        <button class="plus5" id="tambah5">+5</button>
+        <button class="reset" id="reset">RESET</button>
+      </div>
+
+      <button class="save" id="simpan">💾 SIMPAN BARANG</button>
+
+      <hr />
+
+      <h3>📋 Barang Tersimpan</h3>
+
+      <div id="daftar"></div>
+
+      <div class="total" id="total">Total Barang: 0</div>
+    </div>
+
+    <script>
+
+      let jumlah = 0;
+
+      let barang = JSON.parse(
+          localStorage.getItem("barangMasuk") || "[]"
+      );
+
+      const angka = document.getElementById("angka");
+      const daftar = document.getElementById("daftar");
+      const total = document.getElementById("total");
+
+      function updateAngka() {
+          angka.textContent = jumlah;
+      }
+
+      document.getElementById("tambah").onclick = () => {
+          jumlah++;
+          updateAngka();
+      };
+
+      document.getElementById("tambah5").onclick = () => {
+          jumlah += 5;
+          updateAngka();
+      };
+
+      document.getElementById("kurang").onclick = () => {
+          if (jumlah > 0) {
+              jumlah--;
+              updateAngka();
+          }
+      };
+
+      document.getElementById("reset").onclick = () => {
+          jumlah = 0;
+          updateAngka();
+      };
+
+      document.getElementById("simpan").onclick = () => {
+
+          const nama = document
+              .getElementById("namaBarang")
+              .value.trim();
+
+          if (!nama) {
+              alert("Masukkan nama barang terlebih dahulu!");
+              return;
+          }
+
+          if (jumlah <= 0) {
+              alert("Jumlah barang masih 0!");
+              return;
+          }
+
+          barang.push({
+              id: Date.now(),
+              nama: nama,
+              jumlah: jumlah
+          });
+
+          localStorage.setItem(
+              "barangMasuk",
+              JSON.stringify(barang)
+          );
+
+          jumlah = 0;
+
+          document.getElementById("namaBarang").value = "";
+
+          updateAngka();
+          tampilkanBarang();
+
+          alert("Barang berhasil disimpan!");
+      };
+
+      function tampilkanBarang() {
+
+          daftar.innerHTML = "";
+
+          if (barang.length === 0) {
+              daftar.innerHTML =
+                  '<div class="empty">Belum ada barang tersimpan.</div>';
+          }
+
+          barang.forEach((item) => {
+
+              const div = document.createElement("div");
+              div.className = "item";
+
+              const info = document.createElement("span");
+              info.textContent =
+                  item.nama + " — " + item.jumlah + " buah";
+
+              const hapus = document.createElement("button");
+              hapus.textContent = "Hapus";
+
+              hapus.onclick = () => {
+                  barang = barang.filter(
+                      b => b.id !== item.id
+                  );
+
+                  localStorage.setItem(
+                      "barangMasuk",
+                      JSON.stringify(barang)
+                  );
+
+                  tampilkanBarang();
+              };
+
+              div.appendChild(info);
+              div.appendChild(hapus);
+
+              daftar.appendChild(div);
+          });
+
+          const totalBarang = barang.reduce(
+              (sum, item) => sum + item.jumlah,
+              0
+          );
+
+          total.textContent = "Total Barang: " + totalBarang;
+      }
+
+      updateAngka();
+      tampilkanBarang();
+    </script>
+  </body>
+</html>
