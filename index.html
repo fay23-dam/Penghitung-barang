@@ -1,273 +1,383 @@
 <!DOCTYPE html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Penghitung Barang Masuk</title>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Penghitung Barang Masuk</title>
 
-    <style>
-      * {
-          box-sizing: border-box;
-      }
+<style>
+* {
+    box-sizing: border-box;
+}
 
-      body {
-          margin: 0;
-          padding: 20px;
-          background: #111827;
-          color: white;
-          font-family: Arial, sans-serif;
-      }
+body {
+    margin: 0;
+    padding: 20px;
+    background: #111827;
+    color: white;
+    font-family: Arial, sans-serif;
+}
 
-      .container {
-          max-width: 420px;
-          margin: 30px auto;
-          background: #1f2937;
-          padding: 25px;
-          border-radius: 18px;
-      }
+.container {
+    max-width: 420px;
+    margin: 30px auto;
+    background: #1f2937;
+    padding: 25px;
+    border-radius: 18px;
+}
 
-      h2 {
-          text-align: center;
-      }
+h2, h3 {
+    text-align: center;
+}
 
-      input {
-          width: 100%;
-          padding: 14px;
-          border-radius: 9px;
-          border: 1px solid #4b5563;
-          background: #374151;
-          color: white;
-          font-size: 16px;
-          margin: 15px 0;
-      }
+input {
+    width: 100%;
+    padding: 14px;
+    border-radius: 9px;
+    border: 1px solid #4b5563;
+    background: #374151;
+    color: white;
+    font-size: 16px;
+    margin: 15px 0;
+}
 
-      .counter {
-          text-align: center;
-          font-size: 75px;
-          font-weight: bold;
-          margin: 25px 0;
-      }
+.counter {
+    text-align: center;
+    font-size: 75px;
+    font-weight: bold;
+    margin: 25px 0;
+}
 
-      .buttons {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 10px;
-      }
+.buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
 
-      button {
-          border: none;
-          padding: 15px;
-          border-radius: 9px;
-          font-size: 17px;
-          font-weight: bold;
-          cursor: pointer;
-          color: white;
-      }
+button {
+    border: none;
+    padding: 15px;
+    border-radius: 9px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+}
 
-      button:active {
-          transform: scale(0.96);
-      }
+button:active {
+    transform: scale(.96);
+}
 
-      .minus { background: #ef4444; }
-      .plus { background: #16a34a; }
-      .plus5 { background: #2563eb; }
-      .save { background: #d97706; width: 100%; margin-top: 12px; }
-      .reset { background: #4b5563; width: 100%; margin-top: 10px; }
+.minus { background: #ef4444; }
+.plus { background: #16a34a; }
+.plus5 { background: #2563eb; }
+.save { background: #d97706; width: 100%; margin-top: 12px; }
+.reset { background: #4b5563; }
+.cancel { background: #6b7280; width: 100%; margin-top: 10px; }
 
-      hr {
-          border: 0;
-          border-top: 1px solid #374151;
-          margin: 25px 0;
-      }
+.status {
+    text-align: center;
+    color: #fbbf24;
+    margin: 15px 0;
+    font-size: 14px;
+}
 
-      .item {
-          background: #374151;
-          padding: 13px;
-          border-radius: 9px;
-          margin-top: 10px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          gap: 10px;
-      }
+hr {
+    border: 0;
+    border-top: 1px solid #374151;
+    margin: 25px 0;
+}
 
-      .item button {
-          background: #dc2626;
-          padding: 8px 12px;
-          font-size: 13px;
-      }
+.item {
+    background: #374151;
+    padding: 14px;
+    border-radius: 9px;
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
 
-      .total {
-          text-align: center;
-          color: #4ade80;
-          font-size: 18px;
-          font-weight: bold;
-          margin-top: 15px;
-      }
+.item.selected {
+    border-color: #22c55e;
+    background: #253d35;
+}
 
-      .empty {
-          text-align: center;
-          color: #9ca3af;
-          padding: 15px;
-      }
-    </style>
-  </head>
+.item-info {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
 
-  <body>
-    <div class="container">
-      <h2>📦 Barang Masuk</h2>
+.item-info small {
+    display: block;
+    color: #9ca3af;
+    margin-top: 5px;
+}
 
-      <input
+.item button {
+    background: #dc2626;
+    padding: 9px;
+    font-size: 12px;
+}
+
+.total {
+    text-align: center;
+    color: #4ade80;
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.empty {
+    text-align: center;
+    color: #9ca3af;
+    padding: 15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>📦 Barang Masuk</h2>
+
+    <div class="status" id="status">
+        Mode: Barang Baru
+    </div>
+
+    <input
         type="text"
         id="namaBarang"
         placeholder="Masukkan nama barang..."
-      />
+    >
 
-      <div class="counter" id="angka">0</div>
+    <div class="counter" id="angka">0</div>
 
-      <div class="buttons">
+    <div class="buttons">
         <button class="minus" id="kurang">-1</button>
         <button class="plus" id="tambah">+1</button>
         <button class="plus5" id="tambah5">+5</button>
         <button class="reset" id="reset">RESET</button>
-      </div>
-
-      <button class="save" id="simpan">💾 SIMPAN BARANG</button>
-
-      <hr />
-
-      <h3>📋 Barang Tersimpan</h3>
-
-      <div id="daftar"></div>
-
-      <div class="total" id="total">Total Barang: 0</div>
     </div>
 
-    <script>
+    <button class="save" id="simpan">
+        💾 SIMPAN BARANG
+    </button>
 
-      let jumlah = 0;
+    <button class="cancel" id="batal" hidden>
+        BATALKAN PILIHAN
+    </button>
 
-      let barang = JSON.parse(
-          localStorage.getItem("barangMasuk") || "[]"
-      );
+    <hr>
 
-      const angka = document.getElementById("angka");
-      const daftar = document.getElementById("daftar");
-      const total = document.getElementById("total");
+    <h3>📋 Barang Tersimpan</h3>
+    <p style="text-align:center;color:#9ca3af;font-size:13px">
+        Klik barang untuk melanjutkan penghitungan.
+    </p>
 
-      function updateAngka() {
-          angka.textContent = jumlah;
-      }
+    <div id="daftar"></div>
 
-      document.getElementById("tambah").onclick = () => {
-          jumlah++;
-          updateAngka();
-      };
+    <div class="total" id="total">
+        Total Barang: 0
+    </div>
 
-      document.getElementById("tambah5").onclick = () => {
-          jumlah += 5;
-          updateAngka();
-      };
+</div>
 
-      document.getElementById("kurang").onclick = () => {
-          if (jumlah > 0) {
-              jumlah--;
-              updateAngka();
-          }
-      };
+<script>
 
-      document.getElementById("reset").onclick = () => {
-          jumlah = 0;
-          updateAngka();
-      };
+let jumlah = 0;
+let barang = JSON.parse(
+    localStorage.getItem("barangMasuk") || "[]"
+);
 
-      document.getElementById("simpan").onclick = () => {
+let barangDipilih = null;
 
-          const nama = document
-              .getElementById("namaBarang")
-              .value.trim();
+const angka = document.getElementById("angka");
+const daftar = document.getElementById("daftar");
+const total = document.getElementById("total");
+const namaInput = document.getElementById("namaBarang");
+const simpan = document.getElementById("simpan");
+const status = document.getElementById("status");
+const batal = document.getElementById("batal");
 
-          if (!nama) {
-              alert("Masukkan nama barang terlebih dahulu!");
-              return;
-          }
+function updateAngka() {
+    angka.textContent = jumlah;
+}
 
-          if (jumlah <= 0) {
-              alert("Jumlah barang masih 0!");
-              return;
-          }
+function tambah(nilai) {
+    jumlah += nilai;
+    updateAngka();
+}
 
-          barang.push({
-              id: Date.now(),
-              nama: nama,
-              jumlah: jumlah
-          });
+document.getElementById("tambah").onclick = () => tambah(1);
+document.getElementById("tambah5").onclick = () => tambah(5);
 
-          localStorage.setItem(
-              "barangMasuk",
-              JSON.stringify(barang)
-          );
+document.getElementById("kurang").onclick = () => {
+    if (jumlah > 0) tambah(-1);
+};
 
-          jumlah = 0;
+document.getElementById("reset").onclick = () => {
+    jumlah = 0;
+    updateAngka();
+};
 
-          document.getElementById("namaBarang").value = "";
+function simpanData() {
+    localStorage.setItem(
+        "barangMasuk",
+        JSON.stringify(barang)
+    );
+}
 
-          updateAngka();
-          tampilkanBarang();
+function pilihBarang(id) {
 
-          alert("Barang berhasil disimpan!");
-      };
+    const item = barang.find(b => b.id === id);
 
-      function tampilkanBarang() {
+    if (!item) return;
 
-          daftar.innerHTML = "";
+    barangDipilih = id;
+    jumlah = item.jumlah;
 
-          if (barang.length === 0) {
-              daftar.innerHTML =
-                  '<div class="empty">Belum ada barang tersimpan.</div>';
-          }
+    namaInput.value = item.nama;
+    namaInput.readOnly = true;
 
-          barang.forEach((item) => {
+    simpan.textContent = "💾 SIMPAN PERUBAHAN";
+    status.textContent = "Mengedit: " + item.nama;
+    batal.hidden = false;
 
-              const div = document.createElement("div");
-              div.className = "item";
+    updateAngka();
+    tampilkanBarang();
+}
 
-              const info = document.createElement("span");
-              info.textContent =
-                  item.nama + " — " + item.jumlah + " buah";
+function modeBaru() {
+    barangDipilih = null;
+    jumlah = 0;
 
-              const hapus = document.createElement("button");
-              hapus.textContent = "Hapus";
+    namaInput.value = "";
+    namaInput.readOnly = false;
 
-              hapus.onclick = () => {
-                  barang = barang.filter(
-                      b => b.id !== item.id
-                  );
+    simpan.textContent = "💾 SIMPAN BARANG";
+    status.textContent = "Mode: Barang Baru";
+    batal.hidden = true;
 
-                  localStorage.setItem(
-                      "barangMasuk",
-                      JSON.stringify(barang)
-                  );
+    updateAngka();
+    tampilkanBarang();
+}
 
-                  tampilkanBarang();
-              };
+batal.onclick = modeBaru;
 
-              div.appendChild(info);
-              div.appendChild(hapus);
+simpan.onclick = () => {
 
-              daftar.appendChild(div);
-          });
+    const nama = namaInput.value.trim();
 
-          const totalBarang = barang.reduce(
-              (sum, item) => sum + item.jumlah,
-              0
-          );
+    if (!nama) {
+        alert("Masukkan nama barang!");
+        return;
+    }
 
-          total.textContent = "Total Barang: " + totalBarang;
-      }
+    if (jumlah <= 0) {
+        alert("Jumlah barang harus lebih dari 0!");
+        return;
+    }
 
-      updateAngka();
-      tampilkanBarang();
-    </script>
-  </body>
+    if (barangDipilih !== null) {
+
+        const index = barang.findIndex(
+            b => b.id === barangDipilih
+        );
+
+        if (index === -1) return;
+
+        barang[index].jumlah = jumlah;
+
+        alert("Jumlah barang berhasil diperbarui!");
+
+    } else {
+
+        barang.push({
+            id: Date.now(),
+            nama: nama,
+            jumlah: jumlah
+        });
+
+        alert("Barang berhasil disimpan!");
+    }
+
+    simpanData();
+    modeBaru();
+};
+
+function tampilkanBarang() {
+
+    daftar.innerHTML = "";
+
+    if (barang.length === 0) {
+        daftar.innerHTML =
+            '<div class="empty">Belum ada barang tersimpan.</div>';
+    }
+
+    barang.forEach(item => {
+
+        const div = document.createElement("div");
+
+        div.className = "item" +
+            (barangDipilih === item.id ? " selected" : "");
+
+        const info = document.createElement("div");
+        info.className = "item-info";
+        info.innerHTML = "";
+
+        const nama = document.createElement("strong");
+        nama.textContent = item.nama;
+
+        const detail = document.createElement("small");
+        detail.textContent = item.jumlah + " buah • Klik untuk lanjut";
+
+        info.appendChild(nama);
+        info.appendChild(detail);
+
+        const hapus = document.createElement("button");
+        hapus.textContent = "Hapus";
+
+        hapus.onclick = (e) => {
+            e.stopPropagation();
+
+            if (!confirm("Hapus barang ini?")) return;
+
+            barang = barang.filter(b => b.id !== item.id);
+
+            if (barangDipilih === item.id) {
+                modeBaru();
+            }
+
+            simpanData();
+            tampilkanBarang();
+        };
+
+        div.appendChild(info);
+        div.appendChild(hapus);
+
+        div.onclick = () => pilihBarang(item.id);
+
+        daftar.appendChild(div);
+    });
+
+    const totalBarang = barang.reduce(
+        (sum, item) => sum + item.jumlah,
+        0
+    );
+
+    total.textContent = "Total Barang: " + totalBarang;
+}
+
+updateAngka();
+tampilkanBarang();
+
+</script>
+
+</body>
 </html>
